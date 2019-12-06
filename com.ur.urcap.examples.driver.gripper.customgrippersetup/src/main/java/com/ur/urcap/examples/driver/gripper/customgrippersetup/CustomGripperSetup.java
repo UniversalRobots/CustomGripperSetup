@@ -28,6 +28,10 @@ public class CustomGripperSetup implements GripperContribution {
 	private static final String GRIPPER_NAME = "Custom Setup";
 	private static final String UNINITIALIZED_IP = "0.0.0.0";
 
+	private static final String EXTERNAL_GRIPPING_INPUT_ID = "externalGripping";
+	private static final String MOUNTING_INPUT_ID = "mounting";
+	private static final String IP_ADDRESS_INPUT_ID = "ipAddress";
+
 	private GripperAPIProvider gripperAPIProvider;
 	private TCPConfiguration tcpConfiguration;
 
@@ -77,7 +81,7 @@ public class CustomGripperSetup implements GripperContribution {
 	}
 
 	@Override
-	public void configureInstallation(CustomUserInputConfiguration customUserInputConfiguration, SystemConfiguration systemConfiguration,
+	public void configureInstallation(CustomUserInputConfiguration configurationUIBuilder, SystemConfiguration systemConfiguration,
 	                                  TCPConfiguration tcpConfiguration, GripperAPIProvider gripperAPIProvider) {
 		this.gripperAPIProvider = gripperAPIProvider;
 		this.tcpConfiguration = tcpConfiguration;
@@ -85,7 +89,7 @@ public class CustomGripperSetup implements GripperContribution {
 		createMountingTCPPoses();
 		tcpConfiguration.setTCP("Gripper", standardTCPPose);
 
-		customizeInstallationScreen(customUserInputConfiguration);
+		customizeInstallationScreen(configurationUIBuilder);
 	}
 
 	private void createMountingTCPPoses() {
@@ -111,7 +115,7 @@ public class CustomGripperSetup implements GripperContribution {
 	private void customizeInstallationScreen(CustomUserInputConfiguration configurationUIBuilder) {
 		configurationUIBuilder.setDescriptionText("Configure the setup of the gripper.");
 
-		externalGrippingCheckBox = configurationUIBuilder.registerBooleanInput("externalGripping", "Use External Gripping", true);
+		externalGrippingCheckBox = configurationUIBuilder.registerBooleanInput(EXTERNAL_GRIPPING_INPUT_ID, "Use External Gripping", true);
 		externalGrippingCheckBox.setValueChangedListener(new ValueChangedListener<Boolean>() {
 			@Override
 			public void onValueChanged(Boolean value) {
@@ -121,7 +125,7 @@ public class CustomGripperSetup implements GripperContribution {
 
 		configurationUIBuilder.addFiller();
 
-		gripperMountingComboBox = configurationUIBuilder.registerPreselectedComboBoxInput("mounting", "Gripper Mounting", GripperMounting.STANDARD,
+		gripperMountingComboBox = configurationUIBuilder.registerPreselectedComboBoxInput(MOUNTING_INPUT_ID, "Gripper Mounting", GripperMounting.STANDARD,
 				Arrays.asList(GripperMounting.values()), new ElementResolver<GripperMounting>() {
 					@Override
 					public String getId(GripperMounting element) {
@@ -146,7 +150,7 @@ public class CustomGripperSetup implements GripperContribution {
 		configurationUIBuilder.addFiller();
 		configurationUIBuilder.addFiller();
 
-		ipAddress = configurationUIBuilder.registerIPAddressInput("ipAddress", "IP Address", UNINITIALIZED_IP);
+		ipAddress = configurationUIBuilder.registerIPAddressInput(IP_ADDRESS_INPUT_ID, "IP Address", UNINITIALIZED_IP);
 		ipAddress.setValueChangedListener(new ValueChangedListener<String>() {
 			@Override
 			public void onValueChanged(String value) {
